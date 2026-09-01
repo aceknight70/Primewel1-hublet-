@@ -1,0 +1,6 @@
+{
+  "name": "Universal Affiliate Hub",
+  "description": "Multi-tenant affiliate hub system with shared promo engine, per-skin exclusive directories, response watch, and staff role management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
