@@ -18,6 +18,7 @@ import {
   FileCode,
   Users,
   CheckCircle2,
+  Copy,
 } from 'lucide-react';
 
 export const MasterOverview: React.FC = () => {
@@ -45,6 +46,17 @@ export const MasterOverview: React.FC = () => {
   const [newCuratorName, setNewCuratorName] = useState('');
   const [newPrimaryColor, setNewPrimaryColor] = useState('#0F172A');
   const [newAccentColor, setNewAccentColor] = useState('#38BDF8');
+  
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  const handleCopyLink = (e: React.MouseEvent, slug: string) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/${slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedSlug(slug);
+      setTimeout(() => setCopiedSlug(null), 2000);
+    });
+  };
 
   // Cross-skin aggregate computations
   const totalEcosystemVolume = redemptions.reduce((acc, r) => acc + r.grossAmountNgn, 0);
@@ -264,7 +276,7 @@ export const MasterOverview: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-5 flex items-center gap-2 pt-3 border-t border-slate-800">
+                  <div className="mt-5 flex flex-wrap items-center gap-2 pt-3 border-t border-slate-800">
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate(`/${skin.slug}`); }}
                       className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition cursor-pointer"
@@ -272,10 +284,26 @@ export const MasterOverview: React.FC = () => {
                       <Globe className="h-3.5 w-3.5 text-amber-400" />
                       <span>Visit Public Hub</span>
                     </button>
+                    <button
+                      onClick={(e) => handleCopyLink(e, skin.slug)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition cursor-pointer"
+                    >
+                      {copiedSlug === skin.slug ? (
+                        <>
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3.5 w-3.5 text-slate-400" />
+                          <span>Copy Link</span>
+                        </>
+                      )}
+                    </button>
                     {isMaster && (
                       <button
                         onClick={(e) => { e.stopPropagation(); navigate(`/${skin.slug}/manager`); }}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-purple-600/30 border border-purple-500/30 px-3 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-600/50 transition cursor-pointer"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-purple-600/30 border border-purple-500/30 px-3 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-600/50 transition cursor-pointer"
                       >
                         <ShieldCheck className="h-3.5 w-3.5" />
                         <span>Manager Desk</span>
