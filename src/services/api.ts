@@ -179,24 +179,16 @@ export const api = {
   },
 
   async updateSkinTheme(slug: string, updates: { logoUrl?: string; primaryColor?: string; accentColor?: string; tagline?: string }): Promise<AffhubClient> {
-    try {
-      const res = await fetch(`/api/skins/${encodeURIComponent(slug)}/theme`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const res = await fetch(`/api/skins/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Server error: ${res.status}`);
     }
-    const client = localClients.find(c => c.slug.toLowerCase() === slug.toLowerCase()) || localClients[0];
-    if (client) {
-      if (updates.logoUrl !== undefined) client.brandTheme.logoUrl = updates.logoUrl;
-      if (updates.primaryColor) client.brandTheme.primaryColor = updates.primaryColor;
-      if (updates.accentColor) client.brandTheme.accentColor = updates.accentColor;
-      if (updates.tagline) client.tagline = updates.tagline;
-    }
-    return client;
+    return await res.json();
   },
 
   // Affiliates
@@ -216,62 +208,29 @@ export const api = {
   },
 
   async updateAffiliate(id: string, updates: Partial<AffhubAffiliate>): Promise<AffhubAffiliate> {
-    try {
-      const res = await fetch(`/api/affiliates/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const res = await fetch(`/api/affiliates/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Server error: ${res.status}`);
     }
-    const idx = localAffiliates.findIndex(a => a.id === id);
-    if (idx !== -1) {
-      localAffiliates[idx] = { ...localAffiliates[idx], ...updates };
-      return localAffiliates[idx];
-    }
-    throw new Error('Affiliate not found');
+    return await res.json();
   },
 
   async createAffiliate(data: Partial<AffhubAffiliate>): Promise<AffhubAffiliate> {
-    try {
-      const res = await fetch('/api/affiliates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const res = await fetch('/api/affiliates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Server error: ${res.status}`);
     }
-    const newAff: AffhubAffiliate = {
-      id: `aff-${Date.now()}`,
-      clientId: data.clientId || 'client-pw-001',
-      fullName: data.fullName || 'New Affiliate',
-      slug: (data.fullName || 'affiliate').toLowerCase().replace(/[^a-z0-9]/g, '-'),
-      email: data.email || 'affiliate@hub.ng',
-      niche: data.niche || 'Tech & Lifestyle',
-      nicheCategory: data.nicheCategory || 'tech',
-      tier: data.tier || 'starter',
-      waNumber: data.waNumber || '2348000000000',
-      waChannelUrl: data.waChannelUrl || '',
-      bio: data.bio || 'Verified affiliate partner',
-      photoUrl: data.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
-      currentlyFeaturing: data.currentlyFeaturing || 'Featured products',
-      rating: 5.0,
-      reviewCount: 1,
-      totalRedemptions: 0,
-      commissionEarnedNgn: 0,
-      commissionRatePct: data.tier === 'prime' ? 5.5 : data.tier === 'verified' ? 5.0 : 4.0,
-      status: 'active',
-      gallery: [],
-      promoCode: data.promoCode || `PW-${(data.fullName || 'VIP').slice(0, 4).toUpperCase()}-01`,
-      location: data.location || 'Lagos, Nigeria',
-      joinedDate: 'Mar 2026',
-    };
-    localAffiliates.push(newAff);
-    return newAff;
+    return await res.json();
   },
 
   // Pilot Businesses
