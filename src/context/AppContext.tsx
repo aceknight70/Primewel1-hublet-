@@ -62,7 +62,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Path state (defaults to /primewell for immediate immersion, or reads from browser URL)
-  const initialPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const initialPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/';
 
   const [activePath, setActivePath] = useState<string>(initialPath);
   const [activeSkinSlug, setActiveSkinSlug] = useState<string>('primewell');
@@ -105,23 +105,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync route and determine view mode
   const parsePath = useCallback((path: string) => {
-    const cleanPath = path.split('?')[0];
+    let url;
+    try {
+      // Use a dummy origin for relative paths
+      url = new URL(path, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+    } catch {
+      url = new URL(path, 'http://localhost');
+    }
+    
+    const store = url.searchParams.get('store');
+    const cleanPath = url.pathname;
     const segments = cleanPath.split('/').filter(Boolean);
 
-    if (segments.length === 0 || cleanPath === '/' || cleanPath === '/master') {
+    // Backward compatibility: redirect old path-based links (/primewell, /apex/manager) to new query format
+    if (!store && segments.length > 0 && cleanPath !== '/master') {
+      const legacyStore = segments[0];
+      const viewOrAffiliate = segments.length > 1 ? segments[1] : '';
+      const newPath = viewOrAffiliate ? `/${viewOrAffiliate}?store=${legacyStore}` : `/?store=${legacyStore}`;
+      
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', newPath);
+      }
+      
+      setActiveSkinSlug(legacyStore.toLowerCase());
+      if (viewOrAffiliate === 'manager') {
+        setActiveView('manager_portal');
+      } else if (viewOrAffiliate === 'affiliate') {
+        setActiveView('affiliate_portal');
+      } else {
+        setActiveView('public_skin');
+      }
+      return;
+    }
+
+    // Default or Master view
+    if (cleanPath === '/master' || (!store && segments.length === 0)) {
       setActiveSkinSlug('primewell');
       setActiveView('master_overview');
       return;
     }
 
-    const skinSlug = segments[0];
-    setActiveSkinSlug(skinSlug);
+    if (store) {
+      setActiveSkinSlug(store.toLowerCase());
+    }
 
-    if (segments.length === 1) {
+    if (segments.length === 0) {
       setActiveView('public_skin');
-    } else if (segments[1] === 'manager') {
+    } else if (segments[0] === 'manager') {
       setActiveView('manager_portal');
-    } else if (segments[1] === 'affiliate') {
+    } else if (segments[0] === 'affiliate') {
       setActiveView('affiliate_portal');
     } else {
       setActiveView('public_skin');
@@ -194,10 +226,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           navigate('/master');
         } else if (res.user.role === 'manager') {
           const skin = allSkins.find(s => s.id === res.user.clientId) || allSkins[0];
-          navigate(`/${skin ? skin.slug : 'primewell'}/manager`);
+          navigate(`/manager?store=${skin ? skin.slug : "primewell"}`);
         } else if (res.user.role === 'affiliate') {
           const skin = allSkins.find(s => s.id === res.user.clientId) || allSkins[0];
-          navigate(`/${skin ? skin.slug : 'primewell'}/affiliate`);
+          navigate(`/affiliate?store=${skin ? skin.slug : "primewell"}`);
         }
         await refreshAllData();
       }
@@ -236,7 +268,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const result = await api.createSkin(data);
       showToast(`Provisioned new skin: ${result.skin.displayName} (/${result.skin.slug})`, 'success');
       await refreshAllData();
-      navigate(`/${result.skin.slug}`);
+      navigate(`/?store=${result.skin.slug}`);
     } catch (err: any) {
       showToast(err.message || 'Failed to provision skin', 'error');
     }

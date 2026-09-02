@@ -51,7 +51,7 @@ export const MasterOverview: React.FC = () => {
 
   const handleCopyLink = (e: React.MouseEvent, slug: string) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/${slug}`;
+    const url = `${window.location.origin}/?store=${slug}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopiedSlug(slug);
       setTimeout(() => setCopiedSlug(null), 2000);
@@ -226,7 +226,7 @@ export const MasterOverview: React.FC = () => {
               return (
                 <div
                   key={skin.id}
-                  onClick={() => navigate(`/${skin.slug}`)}
+                  onClick={() => navigate(`/?store=${skin.slug}`)}
                   className="group relative flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-950 p-6 transition hover:border-purple-500/50 hover:shadow-xl cursor-pointer"
                 >
                   <div>
@@ -278,7 +278,7 @@ export const MasterOverview: React.FC = () => {
 
                   <div className="mt-5 flex flex-wrap items-center gap-2 pt-3 border-t border-slate-800">
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate(`/${skin.slug}`); }}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/?store=${skin.slug}`); }}
                       className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition cursor-pointer"
                     >
                       <Globe className="h-3.5 w-3.5 text-amber-400" />
@@ -302,7 +302,7 @@ export const MasterOverview: React.FC = () => {
                     </button>
                     {isMaster && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); navigate(`/${skin.slug}/manager`); }}
+                        onClick={(e) => { e.stopPropagation(); navigate(`/manager?store=${skin.slug}`); }}
                         className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-purple-600/30 border border-purple-500/30 px-3 py-2 text-xs font-semibold text-purple-300 hover:bg-purple-600/50 transition cursor-pointer"
                       >
                         <ShieldCheck className="h-3.5 w-3.5" />

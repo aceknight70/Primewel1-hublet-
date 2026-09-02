@@ -130,7 +130,7 @@ export const Header: React.FC = () => {
           <nav className="hidden md:flex items-center gap-1 rounded-xl bg-slate-900/90 p-1 border border-slate-800 text-xs font-medium">
             <button
               id="nav-public-hub"
-              onClick={() => navigate(`/${activeSkinSlug}`)}
+              onClick={() => navigate(`/?store=${activeSkinSlug}`)}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
                 activePath === `/${activeSkinSlug}`
                   ? 'bg-amber-500 text-slate-950 font-bold shadow'
@@ -143,7 +143,7 @@ export const Header: React.FC = () => {
 
             <button
               id="nav-affiliate-portal"
-              onClick={() => navigate(`/${activeSkinSlug}/affiliate`)}
+              onClick={() => navigate(`/affiliate?store=${activeSkinSlug}`)}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
                 activePath === `/${activeSkinSlug}/affiliate`
                   ? 'bg-blue-600 text-white font-bold shadow'
@@ -156,7 +156,7 @@ export const Header: React.FC = () => {
 
             <button
               id="nav-manager-portal"
-              onClick={() => navigate(`/${activeSkinSlug}/manager`)}
+              onClick={() => navigate(`/manager?store=${activeSkinSlug}`)}
               className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
                 activePath === `/${activeSkinSlug}/manager`
                   ? 'bg-emerald-600 text-white font-bold shadow'
@@ -208,7 +208,7 @@ export const Header: React.FC = () => {
                       key={skin.id}
                       onClick={() => {
                         setIsSkinDropdownOpen(false);
-                        navigate(`/${skin.slug}`);
+                        navigate(`/?store=${skin.slug}`);
                       }}
                       className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs transition ${
                         skin.slug === activeSkinSlug
@@ -333,7 +333,7 @@ export const Header: React.FC = () => {
       {/* Mobile Path Nav Bar */}
       <div className="md:hidden flex items-center justify-around border-t border-slate-800/80 bg-slate-950 px-2 py-2 text-xs">
         <button
-          onClick={() => navigate(`/${activeSkinSlug}`)}
+          onClick={() => navigate(`/?store=${activeSkinSlug}`)}
           className={`flex items-center gap-1 px-2 py-1 rounded ${
             activePath === `/${activeSkinSlug}` ? 'text-amber-400 font-bold' : 'text-slate-400'
           }`}
@@ -342,7 +342,7 @@ export const Header: React.FC = () => {
           Directory
         </button>
         <button
-          onClick={() => navigate(`/${activeSkinSlug}/affiliate`)}
+          onClick={() => navigate(`/affiliate?store=${activeSkinSlug}`)}
           className={`flex items-center gap-1 px-2 py-1 rounded ${
             activePath === `/${activeSkinSlug}/affiliate` ? 'text-blue-400 font-bold' : 'text-slate-400'
           }`}
@@ -351,7 +351,7 @@ export const Header: React.FC = () => {
           Card
         </button>
         <button
-          onClick={() => navigate(`/${activeSkinSlug}/manager`)}
+          onClick={() => navigate(`/manager?store=${activeSkinSlug}`)}
           className={`flex items-center gap-1 px-2 py-1 rounded ${
             activePath === `/${activeSkinSlug}/manager` ? 'text-emerald-400 font-bold' : 'text-slate-400'
           }`}
