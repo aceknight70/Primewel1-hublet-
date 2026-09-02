@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/api/auth/staff", "destination": "/api/auth/staff.ts" },
+    { "source": "/api/skins", "destination": "/api/skins.ts" },
+    { "source": "/api/skins/:slug", "destination": "/api/skins/[slug].ts" },
+    { "source": "/api/businesses", "destination": "/api/businesses.ts" },
+    { "source": "/api/affiliates", "destination": "/api/affiliates.ts" },
+    { "source": "/api/affiliates/:id", "destination": "/api/affiliates/[id].ts" },
+    { "source": "/api/promo/redeem", "destination": "/api/promo/redeem.ts" },
+    { "source": "/api/redemptions", "destination": "/api/redemptions.ts" },
+    { "source": "/api/response-watch", "destination": "/api/response-watch.ts" },
+    { "source": "/api/response-watch/:id", "destination": "/api/response-watch/[id].ts" },
+    { "source": "/api/audit-rls", "destination": "/api/audit-rls.ts" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
