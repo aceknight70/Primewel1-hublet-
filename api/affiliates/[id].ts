@@ -72,12 +72,30 @@ export default async function handler(req: any, res: any) {
       if (req.body.status !== undefined) updatePayload.active = req.body.status === 'active';
 
       if (Object.keys(updatePayload).length > 0) {
-        const { data, error } = await supabase.from('affhub_affiliates').update(updatePayload).eq('id', id).select();
+        // Try update first
+        let { data, error } = await supabase.from('affhub_affiliates').update(updatePayload).eq('id', id).select();
+        
+        // If not found in DB but exists in memory, upsert it so they can edit mock data
+        if ((!data || data.length === 0) && aff) {
+          const upsertPayload = {
+            id: aff.id,
+            client_id: aff.clientId,
+            name: updatePayload.name || aff.fullName,
+            promo_code: updatePayload.promo_code || aff.promoCode,
+            tier: updatePayload.tier || aff.tier,
+            niche: updatePayload.niche || aff.niche,
+            bio: updatePayload.bio || aff.bio,
+            whatsapp_link: updatePayload.whatsapp_link || aff.waChannelUrl,
+            photo_url: updatePayload.photo_url || aff.photoUrl,
+            active: updatePayload.active !== undefined ? updatePayload.active : (aff.status === 'active')
+          };
+          const upsertResult = await supabase.from('affhub_affiliates').upsert(upsertPayload).select();
+          data = upsertResult.data;
+          error = upsertResult.error;
+        }
+
         if (error) {
           return res.status(500).json({ error: 'Failed to save to Supabase: ' + error.message });
-        }
-        if (!data || data.length === 0) {
-          return res.status(403).json({ error: 'Supabase update failed: RLS blocked the update.' });
         }
       }
 

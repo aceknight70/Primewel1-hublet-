@@ -108,7 +108,7 @@ export const INITIAL_STAFF: AffhubStaff[] = [
 
 export const INITIAL_AFFILIATES: AffhubAffiliate[] = [
   {
-    id: 'aff-pw-chidi-01',
+    id: '11111111-1111-4111-8111-111111111111',
     clientId: 'client-pw-001',
     fullName: 'Chidi Okonkwo',
     slug: 'chidi-tech',
@@ -137,7 +137,7 @@ export const INITIAL_AFFILIATES: AffhubAffiliate[] = [
     joinedDate: 'Jan 2026',
   },
   {
-    id: 'aff-pw-amaka-02',
+    id: '22222222-2222-4222-8222-222222222222',
     clientId: 'client-pw-001',
     fullName: 'Amaka Eze',
     slug: 'amaka-living',
@@ -166,7 +166,7 @@ export const INITIAL_AFFILIATES: AffhubAffiliate[] = [
     joinedDate: 'Jan 2026',
   },
   {
-    id: 'aff-pw-tunde-03',
+    id: '33333333-3333-4333-8333-333333333333',
     clientId: 'client-pw-001',
     fullName: 'Tunde Bakare',
     slug: 'tunde-audio',
@@ -194,7 +194,7 @@ export const INITIAL_AFFILIATES: AffhubAffiliate[] = [
     joinedDate: 'Feb 2026',
   },
   {
-    id: 'aff-pw-ngozi-04',
+    id: '44444444-4444-4444-8444-444444444444',
     clientId: 'client-pw-001',
     fullName: 'Ngozi Adeyemi',
     slug: 'ngozi-home',
@@ -221,7 +221,7 @@ export const INITIAL_AFFILIATES: AffhubAffiliate[] = [
     joinedDate: 'Feb 2026',
   },
   {
-    id: 'aff-pw-emeka-05',
+    id: '55555555-5555-4555-8555-555555555555',
     clientId: 'client-pw-001',
     fullName: 'Emeka Nwosu',
     slug: 'emeka-pro',
@@ -250,7 +250,7 @@ export const INITIAL_AFFILIATES: AffhubAffiliate[] = [
   },
   // Apex skin affiliates (to prove strict isolation from PrimeWell)
   {
-    id: 'aff-apex-kalu-01',
+    id: '66666666-6666-4666-8666-666666666666',
     clientId: 'client-apex-002',
     fullName: 'Kalu Obinna',
     slug: 'kalu-motors',
