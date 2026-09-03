@@ -32,18 +32,18 @@ async function startServer() {
   app.all('/api/auth/staff', (req, res) => authStaff(req, res));
   
   app.all('/api/skins', (req, res) => skins(req, res));
-  app.patch('/api/skins/:slug', (req, res) => skinsSlug(req, res));
+  app.all('/api/skins/:slug', (req, res) => skinsSlug(req, res));
   
   app.all('/api/businesses', (req, res) => businesses(req, res));
   
   app.all('/api/affiliates', (req, res) => affiliates(req, res));
-  app.patch('/api/affiliates/:id', (req, res) => affiliatesId(req, res));
+  app.all('/api/affiliates/:id', (req, res) => affiliatesId(req, res));
   
   app.post('/api/promo/redeem', (req, res) => promoRedeem(req, res));
   app.all('/api/redemptions', (req, res) => redemptions(req, res));
   
   app.all('/api/response-watch', (req, res) => responseWatch(req, res));
-  app.patch('/api/response-watch/:id', (req, res) => responseWatchId(req, res));
+  app.all('/api/response-watch/:id', (req, res) => responseWatchId(req, res));
   
   app.all('/api/audit-rls', (req, res) => auditRls(req, res));
 

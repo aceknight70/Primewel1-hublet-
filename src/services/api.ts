@@ -65,23 +65,21 @@ export const api = {
 
   // Skins
   async getSkins(): Promise<AffhubClient[]> {
-    try {
-      const res = await fetch('/api/skins');
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const res = await fetch(`/api/skins?_t=${Date.now()}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `Server error: ${res.status}`);
     }
-    return localClients;
+    return await res.json();
   },
 
   async getSkinBySlug(slug: string): Promise<AffhubClient | null> {
-    try {
-      const res = await fetch(`/api/skins/${slug}`);
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const res = await fetch(`/api/skins/${encodeURIComponent(slug)}?_t=${Date.now()}`);
+    if (!res.ok) {
+      if (res.status === 404) return null;
+      throw new Error(`Server error: ${res.status}`);
     }
-    return localClients.find(c => c.slug.toLowerCase() === slug.toLowerCase()) || null;
+    return await res.json();
   },
 
   async addBusiness(data: {
@@ -193,18 +191,12 @@ export const api = {
 
   // Affiliates
   async getAffiliates(skinSlug?: string): Promise<AffhubAffiliate[]> {
-    try {
-      const url = skinSlug ? `/api/affiliates?skinSlug=${encodeURIComponent(skinSlug)}` : '/api/affiliates';
-      const res = await fetch(url);
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const url = skinSlug ? `/api/affiliates?skinSlug=${encodeURIComponent(skinSlug)}&_t=${Date.now()}` : `/api/affiliates?_t=${Date.now()}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`);
     }
-    if (skinSlug) {
-      const client = localClients.find(c => c.slug.toLowerCase() === skinSlug.toLowerCase());
-      return client ? localAffiliates.filter(a => a.clientId === client.id) : [];
-    }
-    return localAffiliates;
+    return await res.json();
   },
 
   async updateAffiliate(id: string, updates: Partial<AffhubAffiliate>): Promise<AffhubAffiliate> {
@@ -360,26 +352,22 @@ export const api = {
   },
 
   async getRedemptions(skinSlug?: string): Promise<PromoRedemption[]> {
-    try {
-      const url = skinSlug ? `/api/redemptions?skinSlug=${encodeURIComponent(skinSlug)}` : '/api/redemptions';
-      const res = await fetch(url);
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const url = skinSlug ? `/api/redemptions?skinSlug=${encodeURIComponent(skinSlug)}&_t=${Date.now()}` : `/api/redemptions?_t=${Date.now()}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`);
     }
-    return localRedemptions;
+    return await res.json();
   },
 
   // Response Watch
   async getResponseWatchCases(skinSlug?: string): Promise<ResponseWatchCase[]> {
-    try {
-      const url = skinSlug ? `/api/response-watch?skinSlug=${encodeURIComponent(skinSlug)}` : '/api/response-watch';
-      const res = await fetch(url);
-      if (res.ok) return await res.json();
-    } catch {
-      // fallback
+    const url = skinSlug ? `/api/response-watch?skinSlug=${encodeURIComponent(skinSlug)}&_t=${Date.now()}` : `/api/response-watch?_t=${Date.now()}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`);
     }
-    return localResponseCases;
+    return await res.json();
   },
 
   async createResponseWatchCase(data: Partial<ResponseWatchCase>): Promise<ResponseWatchCase> {
