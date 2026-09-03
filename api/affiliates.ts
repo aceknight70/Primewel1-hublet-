@@ -1,5 +1,6 @@
 import { db } from '../src/api-lib/db';
 import { getSupabaseClient } from '../src/api-lib/supabase';
+import { uploadBase64ToStorage } from '../src/api-lib/uploadBase64';
 
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
@@ -8,9 +9,7 @@ export default async function handler(req: any, res: any) {
     
     if (supabase) {
       try {
-        // Apply basic RLS masking at the backend query level (although RLS handles it, good for clarity)
         let query = supabase.from('affhub_affiliates').select('*');
-        
         const { data, error } = await query;
         if (!error && data) {
           const mapped = data.map(row => {
@@ -42,7 +41,6 @@ export default async function handler(req: any, res: any) {
               joinedDate: row.joined_at || existing.joinedDate || new Date().toISOString()
             };
           });
-          
           const supaIds = new Set(mapped.map(a => a.id));
           const remaining = localAffiliates.filter(a => !supaIds.has(a.id));
           return res.json([...mapped, ...remaining]);
@@ -51,12 +49,22 @@ export default async function handler(req: any, res: any) {
         console.warn('Could not load affiliates from Supabase:', err);
       }
     }
-    
     return res.json(localAffiliates);
   }
 
   if (req.method === 'POST') {
     const newAff = req.body;
+    
+    let finalPhotoUrl = newAff.photoUrl || '';
+    if (newAff.photoUrl && newAff.photoUrl.startsWith('data:image/')) {
+      try {
+        finalPhotoUrl = await uploadBase64ToStorage(newAff.photoUrl, 'brand-assets', `affiliate-${newAff.id || Date.now()}`);
+      } catch (err: any) {
+        return res.status(500).json({ error: err.message });
+      }
+    }
+    
+    newAff.photoUrl = finalPhotoUrl;
     db.affiliates.push(newAff);
     
     const supabase = getSupabaseClient();
@@ -74,7 +82,7 @@ export default async function handler(req: any, res: any) {
         niche: newAff.category,
         bio: newAff.bio,
         whatsapp_link: newAff.waChannelUrl,
-        photo_url: newAff.photoUrl,
+        photo_url: finalPhotoUrl,
         active: newAff.status === 'active'
       });
 

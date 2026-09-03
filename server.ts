@@ -16,8 +16,7 @@ import responseWatch from './api/response-watch.js';
 import responseWatchId from './api/response-watch/[id].js';
 import auditRls from './api/audit-rls.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 async function startServer() {
   const app = express();
